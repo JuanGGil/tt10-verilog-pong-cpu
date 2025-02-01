@@ -1,6 +1,6 @@
 default_nettype none
 
-module PongGame (
+module tt_um_PongGame (
     input  wire [7:0] ui_in,    // The value could be zero or one, indicating up or down movement, or something similar
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
