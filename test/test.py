@@ -37,7 +37,7 @@ async def test_project(dut):
     dut._log.info("Test project behavior")
 
     for i in range(100): # 30 clock cycles
-        dut._log.info(f" X: {dut.current_ball_x.value}, Y: {dut.current_ball_y.value}")
+        dut._log.info(f" X: {dut.ball_x_pos.value}, Y: {dut.ball_y_pos.value}")
         
         # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
         await ClockCycles(dut.clk, 65540)
