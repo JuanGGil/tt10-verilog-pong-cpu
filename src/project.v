@@ -121,4 +121,8 @@ module tt_um_PongGame (
             ball_dir_x <= ~ball_dir_x; // Ball bounces off the paddle
     end
 
+    // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
+    assign uo_out[6] = ball_dir_x;  // Second to last bit
+    assign uo_out[7] = ball_dir_y;  // Last bit
+
 endmodule
