@@ -9,14 +9,14 @@ module tt_um_PongGame (
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+    input  wire       rst_n,     // reset_n - low to reset
 
     //----- Since this is just the pong portion of the entire TTO design, these should be our IO instead
     //input wire [2:0] ui_in,
     //input wire clk,
     //output wire [9:0] paddle_y
     //output wire [9:0] opponent_paddle_y
-    output wire [9:0] current_ball_x
+    output wire [9:0] current_ball_x,
     output wire [9:0] current_ball_y
     //output wire [8:0] score (top half opponent score, bottom half player score)
 
