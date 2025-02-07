@@ -11,11 +11,6 @@ module tt_um_PongGame (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
-
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, clk, rst_n, 1'b0};
 
@@ -31,6 +26,12 @@ module tt_um_PongGame (
     // Ball direction
     reg ball_dir_x = 1; // 1 for right, 0 for left
     reg ball_dir_y = 1; // 1 for down, 0 for up
+
+    // Ball position
+    reg [9:0] ball_x, ball_y; // 10-bit positions for the ball (up to 640 for x and 480 for y)
+
+    // Paddle position
+    reg [9:0] paddle_y; // 10-bit position for the paddle (up to 480 for y)
 
     // Clock divider for slower ball movement
     reg [15:0] clk_div;
@@ -72,12 +73,15 @@ module tt_um_PongGame (
     reg btn_down;
 
     always @(ui_in) begin
-        if (ui_in == 1) begin
+        if (ui_in[0] == 1) begin // Assuming `ui_in[0]` for up, and `ui_in[1]` for down
             btn_up = 1;
             btn_down = 0;
-        end else begin
+        end else if (ui_in[1] == 1) begin
             btn_up = 0;
             btn_down = 1;
+        end else begin
+            btn_up = 0;
+            btn_down = 0;
         end
     end
 
@@ -85,8 +89,10 @@ module tt_um_PongGame (
         if (!rst_n) begin
             paddle_y <= (SCREEN_HEIGHT - PADDLE_HEIGHT) / 2;
         end else begin
+            // Move paddle up, check lower bound
             if (btn_up && paddle_y > 0)
                 paddle_y <= paddle_y - PADDLE_SPEED;
+            // Move paddle down, check upper bound
             else if (btn_down && paddle_y < SCREEN_HEIGHT - PADDLE_HEIGHT)
                 paddle_y <= paddle_y + PADDLE_SPEED;
         end
@@ -95,7 +101,7 @@ module tt_um_PongGame (
     // Ball collision with paddle (simple example)
     always @(posedge clk_div[15]) begin
         if (ball_x <= PADDLE_WIDTH && ball_y >= paddle_y && ball_y <= paddle_y + PADDLE_HEIGHT)
-            ball_dir_x <= ~ball_dir_x;
+            ball_dir_x <= ~ball_dir_x; // Ball bounces off the paddle
     end
 
 endmodule
