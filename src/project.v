@@ -45,7 +45,8 @@ module tt_um_PongGame (
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
     // Ball position
-    reg [9:0] ball_x, ball_y; // 10-bit positions for the ball (up to 640 for x and 480 for y)
+    reg [9:0] ball_x = 320;
+    reg [9:0] ball_y = 240; // 10-bit positions for the ball (up to 640 for x and 480 for y)
 
     // Paddle position
     reg [9:0] paddle_y; // 10-bit position for the paddle (up to 480 for y)
