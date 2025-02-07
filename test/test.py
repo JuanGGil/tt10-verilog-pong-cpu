@@ -39,17 +39,17 @@ async def test_project(dut):
     for i in range(30): # 30 clock cycles
         if (ball_dir_x):
             ball_x += BALL_SPEED;
-        else
+        else:
             ball_x -= BALL_SPEED;
 
         if (ball_dir_y):
             ball_y += BALL_SPEED;
-        else
+        else:
             ball_y -= BALL_SPEED;
 
-        if (ball_x <= BALL_SIZE || ball_x >= SCREEN_WIDTH - BALL_SIZE)
+        if (ball_x <= BALL_SIZE || ball_x >= SCREEN_WIDTH - BALL_SIZE):
             ball_dir_x = ~ball_dir_x;
-        if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE)
+        if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE):
             ball_dir_y <= ~ball_dir_y;
         
         assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
