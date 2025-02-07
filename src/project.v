@@ -16,8 +16,8 @@ module tt_um_PongGame (
     //input wire clk,
     //output wire [9:0] paddle_y
     //output wire [9:0] opponent_paddle_y
-    //output wire [9:0] current_ball_x
-    //output wire [9:0] current_ball_y
+    output wire [9:0] current_ball_x
+    output wire [9:0] current_ball_y
     //output wire [8:0] score (top half opponent score, bottom half player score)
 
 
@@ -124,5 +124,7 @@ module tt_um_PongGame (
     // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
     assign uo_out[6] = ball_dir_x;  // Second to last bit
     assign uo_out[7] = ball_dir_y;  // Last bit
+    assign current_ball_y[9:0] = ball_y;
+    assign current_ball_x[9:0] = ball_x;
 
 endmodule
