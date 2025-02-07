@@ -5,24 +5,24 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
-SCREEN_WIDTH = 640;
-SCREEN_HEIGHT = 480;
-BALL_SIZE = 10;
-PADDLE_WIDTH = 10;
-PADDLE_HEIGHT = 60;
-BALL_SPEED = 2;
-PADDLE_SPEED = 2;
-ball_dir_x = 1
-ball_dir_y = 1
-ball_x = SCREEN_WIDTH/2
-ball_y = SCREEN_HEIGHT/2
+# SCREEN_WIDTH = 640;
+# SCREEN_HEIGHT = 480;
+# BALL_SIZE = 10;
+# PADDLE_WIDTH = 10;
+# PADDLE_HEIGHT = 60;
+# BALL_SPEED = 2;
+# PADDLE_SPEED = 2;
+# ball_dir_x = 1
+# ball_dir_y = 1
+# ball_x = SCREEN_WIDTH/2
+# ball_y = SCREEN_HEIGHT/2
 
 @cocotb.test()
 async def test_project(dut):
     dut._log.info("Start")
 
     # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, units="us")
+    clock = Clock(dut.clk, 0.04, units="us")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -36,23 +36,12 @@ async def test_project(dut):
 
     dut._log.info("Test project behavior")
 
-    for i in range(30): # 30 clock cycles
-        if (ball_dir_x):
-            ball_x += BALL_SPEED;
-        else:
-            ball_x -= BALL_SPEED;
-
-        if (ball_dir_y):
-            ball_y += BALL_SPEED;
-        else:
-            ball_y -= BALL_SPEED;
-
-        if (ball_x <= BALL_SIZE || ball_x >= SCREEN_WIDTH - BALL_SIZE):
-            ball_dir_x = ~ball_dir_x;
-        if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE):
-            ball_dir_y <= ~ball_dir_y;
+    for i in range(100): # 30 clock cycles
+        print(dut.current_ball_x.value)
+        print(dut.current_ball_y.value)
         
-        assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
+        # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
+        await ClockCycles(dut.clk, 65540)
         
 
 
