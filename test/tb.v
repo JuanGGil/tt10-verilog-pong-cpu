@@ -50,8 +50,8 @@ module tb ();
       .ena    (ena),      // enable - goes high when design is selected
       .clk    (clk),      // clock
       .rst_n  (rst_n)     // not reset
-     .current_ball_x_pos(ball_x_pos) // TEMP FOR TESTING
-     .current_ball_y_pos(ball_y_pos) // TEMP FOR TESTING
+     .current_ball_x(ball_x_pos) // TEMP FOR TESTING
+     .current_ball_y(ball_y_pos) // TEMP FOR TESTING
   );
 
 endmodule
