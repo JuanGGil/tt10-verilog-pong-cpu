@@ -5,6 +5,17 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+SCREEN_WIDTH = 640;
+SCREEN_HEIGHT = 480;
+BALL_SIZE = 10;
+PADDLE_WIDTH = 10;
+PADDLE_HEIGHT = 60;
+BALL_SPEED = 2;
+PADDLE_SPEED = 2;
+ball_dir_x = 1
+ball_dir_y = 1
+ball_x = SCREEN_WIDTH/2
+ball_y = SCREEN_HEIGHT/2
 
 @cocotb.test()
 async def test_project(dut):
@@ -25,17 +36,23 @@ async def test_project(dut):
 
     dut._log.info("Test project behavior")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
+    for i in range(30): # 30 clock cycles
+        if (ball_dir_x):
+            ball_x += BALL_SPEED;
+        else
+            ball_x -= BALL_SPEED;
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
-    dut._log_.info(dut.uo_out.value)
+        if (ball_dir_y):
+            ball_y += BALL_SPEED;
+        else
+            ball_y -= BALL_SPEED;
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+        if (ball_x <= BALL_SIZE || ball_x >= SCREEN_WIDTH - BALL_SIZE)
+            ball_dir_x = ~ball_dir_x;
+        if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE)
+            ball_dir_y <= ~ball_dir_y;
+        
+        assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
+        
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+
