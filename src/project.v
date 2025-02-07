@@ -1,4 +1,5 @@
 `default_nettype none
+`timescale 1us \ 1ns
 
 module tt_um_PongGame (
     input  wire [7:0] ui_in,    // The value could be zero or one, indicating up or down movement, or something similar
