@@ -14,11 +14,11 @@ module tt_um_PongGame (
     //----- Since this is just the pong portion of the entire TTO design, these should be our IO instead
     //input wire [2:0] ui_in,
     //input wire clk,
-    //output wire [9:0] paddle_y
-    //output wire [9:0] opponent_paddle_y
+    output wire [9:0] player_paddle_y,
+    output wire [9:0] opponent_paddle_y,
     output wire [9:0] current_ball_x,
-    output wire [9:0] current_ball_y
-    //output wire [8:0] score (top half opponent score, bottom half player score)
+    output wire [9:0] current_ball_y,
+    output wire [7:0] score //(top half opponent score, bottom half player score)
 
 
     
@@ -44,12 +44,18 @@ module tt_um_PongGame (
     reg ball_dir_x = 1; // 1 for right, 0 for left
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
+    // Game Score
+    reg [7:0] game_score = 0;
+
     // Ball position
     reg [9:0] ball_x = 320;
     reg [9:0] ball_y = 240; // 10-bit positions for the ball (up to 640 for x and 480 for y)
 
     // Paddle position
-    reg [9:0] paddle_y; // 10-bit position for the paddle (up to 480 for y)
+    reg [9:0] paddle_y = SCREEN_HEIGHT / 2; // 10-bit position for the paddle (up to 480 for y)
+
+    // Opponent Paddle position
+    reg [9:0] op_paddle_y = SCREEN_HEIGHT / 2; // 10-bit position for the opposing paddle (up to 480 for y)
 
     // Clock divider for slower ball movement
     reg [15:0] clk_div;
@@ -79,8 +85,16 @@ module tt_um_PongGame (
                 ball_y <= ball_y - BALL_SPEED;
 
             // Ball collision with screen edges
-            if (ball_x <= BALL_SIZE || ball_x >= SCREEN_WIDTH - BALL_SIZE)
-                ball_dir_x <= ~ball_dir_x;
+            if (ball_x <= BALL_SIZE) // Here, player scores
+                game_score <= game_score + 1; // equivalent to + 1'b1 (bottom half of score is player)
+                ball_x <= SCREEN_WIDTH / 2;
+                ball_y <= SCREEN_HEIGHT / 2;
+            
+            if (ball_x >= SCREEN_WIDTH - BALL_SIZE) // Here, opponent scores
+                game_score <= game_score + 16; // equivalent to + 1'b10000 (top half of score is opponent)
+                ball_x <= SCREEN_WIDTH / 2;
+                ball_y <= SCREEN_HEIGHT / 2;
+            
             if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE)
                 ball_dir_y <= ~ball_dir_y;
         end
@@ -122,10 +136,21 @@ module tt_um_PongGame (
             ball_dir_x <= ~ball_dir_x; // Ball bounces off the paddle
     end
 
+    // Opponent Paddle simple AI
+    always @(posedge clk_div[15]) begin
+        if (ball_y <= op_paddle_y)
+            op_paddle_y <= op_paddle_y - PADDLE_SPEED;
+        else if (ball_y >= op_paddle_y)
+            op_paddle_y <= op_paddle_y + PADDLE_SPEED;
+    end
+
     // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
     assign uo_out[6] = ball_dir_x;  // Second to last bit
     assign uo_out[7] = ball_dir_y;  // Last bit
     assign current_ball_y[9:0] = ball_y;
     assign current_ball_x[9:0] = ball_x;
+    assign player_paddle_y[9:0] = paddle_y;
+    assign opponent_paddle_y[9:0] = op_paddle_y;
+    assign score[7:0] = game_score;
 
 endmodule
