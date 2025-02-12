@@ -132,7 +132,7 @@ module tt_um_PongGame (
 
     // Ball collision with paddle (simple example)
     always @(posedge clk_div[15]) begin
-        if (ball_x <= PADDLE_WIDTH && ball_y >= paddle_y && ball_y <= paddle_y + PADDLE_HEIGHT)
+        if ((ball_x <= PADDLE_WIDTH && ball_y >= op_paddle_y && ball_y <= op_paddle_y + PADDLE_HEIGHT) || ball_x >= SCREEN_WIDTH-PADDLE_WIDTH && ball_y >= paddle_y && ball_y <= paddle_y)
             ball_dir_x <= ~ball_dir_x; // Ball bounces off the paddle
     end
 
