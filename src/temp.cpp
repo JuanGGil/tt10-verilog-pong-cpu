@@ -26,6 +26,8 @@ bool in_ball(int i, int j, int ball_x, int ball_y){
 }
 
 int main(){
+    long clock = 0;
+    
     // Ball direction
     int ball_dir_x = 1; // 1 for right, 0 for left
     int ball_dir_y = 1; // 1 for down, 0 for up
@@ -36,7 +38,7 @@ int main(){
     // Ball position
     int ball_x = 320;
     int ball_y = 240; // 10-bit positions for the ball (up to 640 for x and 480 for y)
-
+    
     // Paddle position
     int paddle_y = SCREEN_HEIGHT / 2; // 10-bit position for the paddle (up to 480 for y)
 
@@ -46,14 +48,23 @@ int main(){
     ofstream render("render.txt");
 
     for(int i = 0; i < SCREEN_HEIGHT; ++i){
-        for(int j = 0; j < SCREEN_WIDTH; ++j){
-            if(in_paddle(i, j, paddle_y, op_paddle_y) || in_ball(i, j, ball_x, ball_y)){
-                render << '%';
+        for(int j = -48; j < SCREEN_WIDTH+16+96; ++j){
+            render << clock << " ns: ";
+            ++clock;
+            if(j < 0 || j > SCREEN_WIDTH){
+                render << "1 1 ";
             }
             else{
-                render << ' ';
+                render << "0 1 ";
+            }  
+            if(in_paddle(i, j, paddle_y, op_paddle_y) || in_ball(i, j, ball_x, ball_y)){
+                render << '111 111 11';
+            }
+            else{
+                render << '000 000 00';
             }
         }
         render << '\n';
+        
     }
 }
