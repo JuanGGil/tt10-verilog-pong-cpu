@@ -1,6 +1,39 @@
 `default_nettype none
 `timescale 1us / 1ns
 
+module in_paddle(
+    input [9:0] i, j, current, op_current,
+    output reg result
+);
+    parameter PADDLE_HEIGHT = 10;
+    parameter PADDLE_WIDTH = 2;
+    parameter SCREEN_WIDTH = 640;
+
+    always @(*) begin
+        if((i >= op_current && i < op_current + PADDLE_HEIGHT && j >= 0 && j < PADDLE_WIDTH) || 
+           (i >= current && i < current + PADDLE_HEIGHT && j >= SCREEN_WIDTH - PADDLE_WIDTH && j < SCREEN_WIDTH)) begin
+            result = 1;
+        end else begin
+            result = 0;
+        end
+    end
+endmodule
+
+module in_ball(
+    input [9:0] i, j, ball_x, ball_y,
+    output reg result
+);
+    parameter BALL_SIZE = 4;
+
+    always @(*) begin
+        if(j >= ball_x && j <= ball_x + BALL_SIZE && i >= ball_y && i <= ball_y + BALL_SIZE) begin
+            result = 1;
+        end else begin
+            result = 0;
+        end
+    end
+endmodule
+
 module tt_um_PongGame (
     input  wire [7:0] ui_in,    // The value could be zero or one, indicating up or down movement, or something similar
     output wire [7:0] uo_out,   // Dedicated outputs
