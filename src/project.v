@@ -186,4 +186,27 @@ module tt_um_PongGame (
     assign opponent_paddle_y[9:0] = op_paddle_y;
     assign score[7:0] = game_score;
 
+
+/*
+    // SOME IDEAS FOR HOW TO RENDER IMAGE
+
+  // logic for which pixels to render on screen 
+    reg [9:0] rendered_screen_x = 0;
+    reg [8:0] rendered_screen_y = 0;
+
+    reg h_sync = 1; 
+    reg v_sync = 1; // we update game frame when v_sync = 0;
+    
+    always @(posedge clk_div[0]) begin // need output basically once every 31.77microsec/800 this corresponds with a 25.1MHz per pixel
+        if (rendered_screen_x = 
+        
+        if (rendered_screen_x = 800)
+            rendered_screen_y <= rendered_screen_y + 1;
+        
+        
+        
+    end
+
+    */
+    
 endmodule
