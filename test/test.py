@@ -17,12 +17,23 @@ from cocotb.triggers import ClockCycles
 # ball_x = SCREEN_WIDTH/2
 # ball_y = SCREEN_HEIGHT/2
 
+
+
+    f = open("test_vga_output.txt", "w")
+    f.write("This is a new file.")
+    f.close(
+
+
+
+
+
+
 @cocotb.test()
 async def test_project(dut):
     dut._log.info("Start")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 1, units="ns")
+    # Set the clock period to 40 ns (25 MHz)
+    clock = Clock(dut.clk, 40, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -31,17 +42,39 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    # await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
 
+    f = open('test_vga_output.txt', 'w').close()
+    f = open("test_vga_output.txt", "a")
+
+    
     for i in range((800*525)+10): # 30 clock cycles
         dut._log.info(f"{dut.clk}, {dut.uo_out}")
         
         # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
         #await ClockCycles(dut.clk, 65540)
         await ClockCycles(dut.clk, 1)
+
+        time = i * 40
+
+        hsync = dut.uo_out[7]
+        vsync = dut.uo_out[6]
+        red = dut.uo_out[5:4]
+        blue = dut.uo_out[3:2]
+        green = dut.uo_out[1:0]
+
+            # Using f-strings (Python 3.6+)
+        data_string = f" {time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n"
+
+        # Using string formatting
+        # data_string = "Name: %s, Age: %d, City: %s\n" % (name, age, city)
+
+
         
+        f.write(data_string)
+    f.close()
 
 
