@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ns
-
+/*
 // Function to check if pixel is within the paddle area
 function in_paddle(input [9:0] i, input [9:0] j, input [9:0] current, input [9:0] op_current);
     begin
@@ -21,7 +21,7 @@ function in_ball(input [9:0] i, input [9:0] j, input [9:0] ball_x, input [9:0] b
             in_ball = 0;
     end
 endfunction
-
+*/
 
 module tt_um_PongGame (
     input  wire [7:0] ui_in,    // The value could be zero or one, indicating up or down movement, or something similar
@@ -168,9 +168,9 @@ module tt_um_PongGame (
         
         if (rendered_x < 8) begin // left border, RBG does not matter therefore set to black for now
             if (rendered_y > 489 && rendered_y < 492 ) // 8 line top border + 480 line video + 2 line front porch
-                uo_out <= 8'b10000000; // keep Vsync Low
+                assign uo_out = 8'b10000000; // keep Vsync Low
             else
-                uo_out <= 8'b11000000; // keep Vsync High
+                assign uo_out <= 8'b11000000; // keep Vsync High
         end
         
         // logic for rendering one video line (currently rendering only for paddles and ball)
@@ -180,7 +180,7 @@ module tt_um_PongGame (
             // Opponent paddle render logic
             
             if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
-                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
+                assign uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
             else if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
                 uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for opponent paddle 
 
