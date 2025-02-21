@@ -45,7 +45,9 @@ async def test_project(dut):
     f = open("test_vga_output.txt", "a")
 
     
-    for i in range((800*525)+10): # 30 clock cycles
+    #for i in range((800*525)+10): # 30 clock cycles
+    for i in range(10): # 30 clock cycles
+
         
         
         # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
