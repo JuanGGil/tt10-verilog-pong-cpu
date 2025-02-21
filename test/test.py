@@ -54,7 +54,7 @@ async def test_project(dut):
             #await ClockCycles(dut.clk, 65540)
             await ClockCycles(dut.clk, 1)
     
-            time = i * 4
+            time = i * 40 + j * (((2*800*525)+10)*40)
             
             hsync = dut.uo_out[7].value
             
