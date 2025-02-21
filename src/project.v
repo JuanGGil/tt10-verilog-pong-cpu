@@ -1,5 +1,5 @@
 `default_nettype none
-`timescale 1us / 1ns
+`timescale 1ns / 1ns
 
 // Function to check if pixel is within the paddle area
 function in_paddle(input [9:0] i, input [9:0] j, input [9:0] current, input [9:0] op_current);
@@ -57,6 +57,8 @@ module tt_um_PongGame (
     parameter PADDLE_HEIGHT = 60;
     parameter BALL_SPEED = 2;
     parameter PADDLE_SPEED = 2;
+    parameter OPP_PADDLE_X_POS = 30;
+    parameter PLAYER_PADDLE_X_POS = 610;
 
     // Ball direction
     reg ball_dir_x = 1; // 1 for right, 0 for left
@@ -162,8 +164,63 @@ module tt_um_PongGame (
             op_paddle_y <= op_paddle_y + PADDLE_SPEED;
     end
 
-    always @(posedge clk_div[15]) begin
-        integer i, j;
+
+    reg [9:0] rendered_x = 0; // this register holds the current pixel's x-position that is being rendered via VGA (0-800 industry standard)
+    reg [9:0] rendered_y = 0; // this register holds the current pixel's y-position that is being rendered via VGA (0-525 industry standard)
+    
+    always @(posedge clk_div[0]) begin // this timing needs to be tweaked, essentially should occur once every 10ns or 25MHz
+        
+        if (rendered_x < 8) begin // left border, RBG does not matter therefore set to black for now
+            if (rendered_y > 489 && rendered_y < 492 ) // 8 line top border + 480 line video + 2 line front porch
+                uo_out <= 8'b10000000; // keep Vsync Low
+            else
+                uo_out <= 8'b11000000; // keep Vsync High
+        end
+        
+        // logic for displaying image on screen, here we initially render only for paddle and ball
+        // FOR FUTURE: render score and middle dotted line
+        if (rendered_x > 7 && rendered_x < 648) begin
+            
+            // Opponent paddle render logic
+            
+            if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
+                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
+            else if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
+                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for opponent paddle 
+
+            // Player paddle render logic
+            
+            else if (rendered_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
+                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for player paddle
+            else if (rendered_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
+                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for player paddle
+
+            // Ball render logic
+            
+            else if (rendered_x >= (ball_x - BALL_SIZE) && rendered_x <= (ball_x + BALL_SIZE) && rendered_y >= (ball_y - BALL_SIZE) && rendered_y <= (ball_y + BALL_SIZE) && rendered_y > 489 && rendered_y < 492) 
+                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for the ball 
+            else if (rendered_x >= (ball_x - BALL_SIZE) && rendered_x <= (ball_x + BALL_SIZE) && rendered_y >= (ball_y - BALL_SIZE) && rendered_y <= (ball_y + BALL_SIZE) && ~(rendered_y > 489 && rendered_y < 492)) 
+                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for the ball
+
+            // Empty space render logic
+            
+            else begin
+                if (rendered_y > 489 && rendered_y < 492)
+                    uo_out <= 8'b10000000; // Vsync Low, display a black pixel for empty space
+                else
+                    uo_out <= 8'b11000000; // Vsync High, display a black pixel for empty space
+            end
+        end
+
+        // Front Porch Logic
+        if (rendered_x > 647 && rendered_x < 656) begin
+            uo_out = 8'b11000000;
+        end
+
+        if (rendered_x > 800) begin // one line has been rendered, therefore move down to the next line and repeat logic
+            rendered_x <= 0;
+            rendered_y <= rendered_y + 1;
+        
         for (i = -37; i < SCREEN_HEIGHT + 8; i = i + 1) begin
             for (j = -152; j < SCREEN_WIDTH + 8; j = j + 1) begin
                 if (j >= -144 && j < -48) begin
