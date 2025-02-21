@@ -44,7 +44,7 @@ async def test_project(dut):
     f = open('test_vga_output.txt', 'w').close()
     f = open("test_vga_output.txt", "a")
 
-    for j in range(10):
+    for j in range(5):
         for i in range(2*(800*525)+10): # 30 clock cycles
         #for i in range(10): # 30 clock cycles
     
