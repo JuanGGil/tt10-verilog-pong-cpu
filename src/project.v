@@ -1,5 +1,5 @@
 `default_nettype none
-`timescale 1ns / 1ns
+`timescale 1ns / 1ps
 /*
 // Function to check if pixel is within the paddle area
 function in_paddle(input [9:0] i, input [9:0] j, input [9:0] current, input [9:0] op_current);
