@@ -46,7 +46,7 @@ async def test_project(dut):
 
     
     for i in range((800*525)+10): # 30 clock cycles
-        dut._log.info(f"{dut.clk}, {dut.uo_out}")
+        
         
         # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
         #await ClockCycles(dut.clk, 65540)
@@ -60,9 +60,8 @@ async def test_project(dut):
         blue = [dut.uo_out[3],dut.uo_out[2]]
         green = [dut.uo_out[1],dut.uo_out[0]]
 
-        data_string = f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n"
-
-        f.write(data_string)
+        dut._log.info(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
+        f.write(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
     f.close()
 
 
