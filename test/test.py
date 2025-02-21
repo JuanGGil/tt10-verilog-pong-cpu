@@ -56,15 +56,20 @@ async def test_project(dut):
         
         hsync = dut.uo_out[7].value
         
-        #hsync = dut.uo_out.value & 8'b1000000
-        
         vsync = dut.uo_out[6].value
-        red = [dut.uo_out[5].value,dut.uo_out[4].value]
-        blue = [dut.uo_out[3].value,dut.uo_out[2].value]
-        green = [dut.uo_out[1].value,dut.uo_out[0].value]
+        
+        red_1 = dut.uo_out[5].value
+        red_0 = dut.uo_out[4].value
+        
+        blue_1 = dut.uo_out[3].value
+        blue_0 = dut.uo_out[2].value
+        
+        green_1 = dut.uo_out[1].value
+        green_0 = dut.uo_out[0].value
+        
 
         dut._log.info(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
-        f.write(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
+        f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
     f.close()
 
 
