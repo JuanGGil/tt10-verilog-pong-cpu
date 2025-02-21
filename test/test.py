@@ -27,7 +27,7 @@ async def test_project(dut):
     dut._log.info("Start")
 
     # Set the clock period to 40 ns (25 MHz)
-    clock = Clock(dut.clk, 40, units="ns")
+    clock = Clock(dut.clk, 20, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -45,7 +45,7 @@ async def test_project(dut):
     f = open("test_vga_output.txt", "a")
 
     
-    for i in range((800*525)+10): # 30 clock cycles
+    for i in range(5*(800*525)+10): # 30 clock cycles
     #for i in range(10): # 30 clock cycles
 
         
@@ -54,7 +54,7 @@ async def test_project(dut):
         #await ClockCycles(dut.clk, 65540)
         await ClockCycles(dut.clk, 1)
 
-        time = i * 40
+        time = i * 20
         
         hsync = dut.uo_out[7].value
         
