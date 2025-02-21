@@ -46,6 +46,7 @@ module tt_um_PongGame (
 
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, rst_n, 1'b0};
+    wire vga_out
 
     // Parameters
     // these might be better to import into the module instead of instantiating this here (for more variable control)
@@ -168,9 +169,9 @@ module tt_um_PongGame (
         
         if (rendered_x < 8) begin // left border, RBG does not matter therefore set to black for now
             if (rendered_y > 489 && rendered_y < 492 ) // 8 line top border + 480 line video + 2 line front porch
-                assign uo_out = 8'b10000000; // keep Vsync Low
+                uo_out = 8'b10000000; // keep Vsync Low
             else
-                assign uo_out <= 8'b11000000; // keep Vsync High
+                uo_out = 8'b11000000; // keep Vsync High
         end
         
         // logic for rendering one video line (currently rendering only for paddles and ball)
