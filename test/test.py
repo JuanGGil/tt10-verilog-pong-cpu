@@ -22,7 +22,7 @@ async def test_project(dut):
     dut._log.info("Start")
 
     # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 0.04, units="us")
+    clock = Clock(dut.clk, 1, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -36,11 +36,12 @@ async def test_project(dut):
 
     dut._log.info("Test project behavior")
 
-    for i in range(100): # 30 clock cycles
-        dut._log.info(f" X: {int(dut.ball_x_pos.value)}, Y: {int(dut.ball_y_pos.value)}")
+    for i in range((800*525)+10): # 30 clock cycles
+        dut._log.info(f"{dut.clk}, {dut.uo_out}")
         
         # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
-        await ClockCycles(dut.clk, 65540)
+        #await ClockCycles(dut.clk, 65540)
+        await ClockCycles(dut.clk, 1)
         
 
 
