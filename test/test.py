@@ -53,12 +53,15 @@ async def test_project(dut):
         await ClockCycles(dut.clk, 1)
 
         time = i * 40
-    
-        hsync = dut.uo_out[7]
-        vsync = dut.uo_out[6]
-        red = [dut.uo_out[5],dut.uo_out[4]]
-        blue = [dut.uo_out[3],dut.uo_out[2]]
-        green = [dut.uo_out[1],dut.uo_out[0]]
+        
+        hsync = dut.uo_out[7].value
+        
+        #hsync = dut.uo_out.value & 8'b1000000
+        
+        vsync = dut.uo_out[6].value
+        red = [dut.uo_out[5].value,dut.uo_out[4].value]
+        blue = [dut.uo_out[3].value,dut.uo_out[2].value]
+        green = [dut.uo_out[1].value,dut.uo_out[0].value]
 
         dut._log.info(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
         f.write(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
