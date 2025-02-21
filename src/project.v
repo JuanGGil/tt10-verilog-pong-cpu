@@ -36,11 +36,11 @@ module tt_um_PongGame (
     //----- Since this is just the pong portion of the entire TTO design, these should be our IO instead
     //input wire [2:0] ui_in,
     //input wire clk,
-    output wire [9:0] player_paddle_y,
-    output wire [9:0] opponent_paddle_y,
-    output wire [9:0] current_ball_x,
-    output wire [9:0] current_ball_y,
-    output wire [7:0] score //(top half opponent score, bottom half player score)
+    //output wire [9:0] player_paddle_y,
+    //output wire [9:0] opponent_paddle_y,
+    //output wire [9:0] current_ball_x,
+    //output wire [9:0] current_ball_y,
+    //output wire [7:0] score //(top half opponent score, bottom half player score)
 
 );
 
@@ -66,6 +66,7 @@ module tt_um_PongGame (
 
     // Game Score
     reg [7:0] game_score = 0;
+    
 
     // Ball position
     reg [9:0] ball_x = 320;
@@ -77,18 +78,15 @@ module tt_um_PongGame (
     // Opponent Paddle position
     reg [9:0] op_paddle_y = SCREEN_HEIGHT / 2; // 10-bit position for the opposing paddle (up to 480 for y)
 
-    // Clock divider for slower ball movement
-    reg [15:0] clk_div;
-    always @(posedge clk) begin
-        if (!rst_n) begin
-            clk_div <= 0;
-        end else begin
-            clk_div <= clk_div + 1;
-        end
-    end
-
+    // screen rendering register for VGA output
+    reg [9:0] rendered_x = 0; // this register holds the current pixel's x-position that is being rendered via VGA (0-800 industry standard)
+    reg [9:0] rendered_y = 0; // this register holds the current pixel's y-position that is being rendered via VGA (0-525 industry standard)
+    
+    // Clock divider to make game run at readable speeds, this is incremented on each game frame being generated
+    reg [5:0] clk_div;
+    
     // Ball movement
-    always @(posedge clk_div[15]) begin
+    always @(posedge clk_div[4]) begin // on the 32nd out of 60 frames generated per second (happens once per second)
         if (!rst_n) begin
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
@@ -137,7 +135,7 @@ module tt_um_PongGame (
         end
     end
 
-    always @(posedge clk) begin
+    always @(posedge clk_div[4]) begin
         if (!rst_n) begin
             paddle_y <= (SCREEN_HEIGHT - PADDLE_HEIGHT) / 2;
         end else begin
@@ -151,24 +149,22 @@ module tt_um_PongGame (
     end
 
     // Ball collision with paddle (simple example)
-    always @(posedge clk_div[15]) begin
+    always @(posedge clk_div[4]) begin
         if ((ball_x <= PADDLE_WIDTH && ball_y >= op_paddle_y && ball_y <= op_paddle_y + PADDLE_HEIGHT) || ball_x >= SCREEN_WIDTH-PADDLE_WIDTH && ball_y >= paddle_y && ball_y <= paddle_y)
             ball_dir_x <= ~ball_dir_x; // Ball bounces off the paddle
     end
 
     // Opponent Paddle simple AI
-    always @(posedge clk_div[15]) begin
+    always @(posedge clk_div[4]) begin
         if (ball_y <= op_paddle_y)
             op_paddle_y <= op_paddle_y - PADDLE_SPEED;
         else if (ball_y >= op_paddle_y)
             op_paddle_y <= op_paddle_y + PADDLE_SPEED;
     end
-
-
-    reg [9:0] rendered_x = 0; // this register holds the current pixel's x-position that is being rendered via VGA (0-800 industry standard)
-    reg [9:0] rendered_y = 0; // this register holds the current pixel's y-position that is being rendered via VGA (0-525 industry standard)
     
-    always @(posedge clk_div[0]) begin // this timing needs to be tweaked, essentially should occur once every 10ns or 25MHz
+    always @(posedge clk) begin // this timing needs to be tweaked, essentially should occur once every 10ns or 25MHz
+
+        // logic for left border render
         
         if (rendered_x < 8) begin // left border, RBG does not matter therefore set to black for now
             if (rendered_y > 489 && rendered_y < 492 ) // 8 line top border + 480 line video + 2 line front porch
@@ -177,7 +173,7 @@ module tt_um_PongGame (
                 uo_out <= 8'b11000000; // keep Vsync High
         end
         
-        // logic for displaying image on screen, here we initially render only for paddle and ball
+        // logic for rendering one video line (currently rendering only for paddles and ball)
         // FOR FUTURE: render score and middle dotted line
         if (rendered_x > 7 && rendered_x < 648) begin
             
@@ -214,45 +210,55 @@ module tt_um_PongGame (
 
         // Front Porch Logic
         if (rendered_x > 647 && rendered_x < 656) begin
-            uo_out = 8'b11000000;
+            if (rendered_y > 489 && rendered_y < 492)
+                uo_out <= 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+            else
+                uo_out <= 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
         end
 
-        if (rendered_x > 800) begin // one line has been rendered, therefore move down to the next line and repeat logic
+        // V-Sync Render Logic
+        if (rendered_x > 655 && rendered_x < 752) begin
+            if (rendered_y > 489 && rendered_y < 492)
+                uo_out <= 8'b00000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+            else
+                uo_out <= 8'b01000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
+        end
+
+        // Back-Porch Logic
+        if (rendered_x > 751 && rendered_x < 800) begin
+            if (rendered_y > 489 && rendered_y < 492)
+                uo_out <= 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+            else
+                uo_out <= 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
+        end
+        
+        rendered_x <= rendered_x + 1;
+
+        if (rendered_x > 799) begin // finished rendering one line of video, move onto the next line
             rendered_x <= 0;
             rendered_y <= rendered_y + 1;
-        
-        for (i = -37; i < SCREEN_HEIGHT + 8; i = i + 1) begin
-            for (j = -152; j < SCREEN_WIDTH + 8; j = j + 1) begin
-                if (j >= -144 && j < -48) begin
-                    output[0] <= 0;
-                end else begin
-                    output[0] <= 1;
-                end
-
-                if (i >= -35 && i < -33) begin
-                    output[1] <= 0;
-                end else begin
-                    output[1] <= 1;
-                end
-
-                if ((i < 0 || i >= SCREEN_HEIGHT) || (j < 0 || j >= SCREEN_WIDTH) ||
-                    in_paddle(i, j, paddle_y, op_paddle_y) || in_ball(i, j, ball_x, ball_y)) begin
-                    output[2] <= 0;
-                end else begin
-                    output[2] <= 1;
+            if (rendered_y > 524) begin // finished rendering one screen of video, begin rendering the next screen
+                rendered_y <= 0;
+                clk_div <= clk_div + 1;  
+                // 60 screens get generated per second (60Hz), therefore we need to have a way to slow the game down for 
+                // human readability and this is one method available to us (+1 clk_div per screen reset every 60 screens)
+                if (clk_div > 59) begin
+                    clk_div <= 0;
                 end
             end
         end
+
+        
     end
 
     // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
-    assign uo_out[6] = ball_dir_x;  // Second to last bit
-    assign uo_out[7] = ball_dir_y;  // Last bit
-    assign current_ball_y[9:0] = ball_y;
-    assign current_ball_x[9:0] = ball_x;
-    assign player_paddle_y[9:0] = paddle_y;
-    assign opponent_paddle_y[9:0] = op_paddle_y;
-    assign score[7:0] = game_score;
+    //assign uo_out[6] = ball_dir_x;  // Second to last bit
+    //assign uo_out[7] = ball_dir_y;  // Last bit
+    //assign current_ball_y[9:0] = ball_y;
+    //assign current_ball_x[9:0] = ball_x;
+    //assign player_paddle_y[9:0] = paddle_y;
+    //assign opponent_paddle_y[9:0] = op_paddle_y;
+    //assign score[7:0] = game_score;
 
     
 endmodule
