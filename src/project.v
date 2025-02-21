@@ -181,56 +181,56 @@ module tt_um_PongGame (
             // Opponent paddle render logic
             
             if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
-                assign uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
+                uo_out = 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
             else if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
-                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for opponent paddle 
+                uo_out = 8'b11111111; // keep Vsync High, display a white pixel for opponent paddle 
 
             // Player paddle render logic
             
             else if (rendered_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
-                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for player paddle
+                uo_out = 8'b10111111; // keep Vsync Low, display a white pixel for player paddle
             else if (rendered_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
-                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for player paddle
+                uo_out = 8'b11111111; // keep Vsync High, display a white pixel for player paddle
 
             // Ball render logic
             
             else if (rendered_x >= (ball_x - BALL_SIZE) && rendered_x <= (ball_x + BALL_SIZE) && rendered_y >= (ball_y - BALL_SIZE) && rendered_y <= (ball_y + BALL_SIZE) && rendered_y > 489 && rendered_y < 492) 
-                uo_out <= 8'b10111111; // keep Vsync Low, display a white pixel for the ball 
+                uo_out = 8'b10111111; // keep Vsync Low, display a white pixel for the ball 
             else if (rendered_x >= (ball_x - BALL_SIZE) && rendered_x <= (ball_x + BALL_SIZE) && rendered_y >= (ball_y - BALL_SIZE) && rendered_y <= (ball_y + BALL_SIZE) && ~(rendered_y > 489 && rendered_y < 492)) 
-                uo_out <= 8'b11111111; // keep Vsync High, display a white pixel for the ball
+                uo_out = 8'b11111111; // keep Vsync High, display a white pixel for the ball
 
             // Empty space render logic
             
             else begin
                 if (rendered_y > 489 && rendered_y < 492)
-                    uo_out <= 8'b10000000; // Vsync Low, display a black pixel for empty space
+                    uo_out = 8'b10000000; // Vsync Low, display a black pixel for empty space
                 else
-                    uo_out <= 8'b11000000; // Vsync High, display a black pixel for empty space
+                    uo_out = 8'b11000000; // Vsync High, display a black pixel for empty space
             end
         end
 
         // Front Porch Logic
         if (rendered_x > 647 && rendered_x < 656) begin
             if (rendered_y > 489 && rendered_y < 492)
-                uo_out <= 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
             else
-                uo_out <= 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
         end
 
         // V-Sync Render Logic
         if (rendered_x > 655 && rendered_x < 752) begin
             if (rendered_y > 489 && rendered_y < 492)
-                uo_out <= 8'b00000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b00000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
             else
-                uo_out <= 8'b01000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b01000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
         end
 
         // Back-Porch Logic
         if (rendered_x > 751 && rendered_x < 800) begin
             if (rendered_y > 489 && rendered_y < 492)
-                uo_out <= 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b10000000; // Vsync Low, RGB doesnt matter, therefore outputing a black pixel
             else
-                uo_out <= 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
+                uo_out = 8'b11000000; // Vsync High, RGB doesnt matter, therefore outputing a black pixel
         end
         
         rendered_x <= rendered_x + 1;
