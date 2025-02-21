@@ -24,11 +24,11 @@ module tb ();
   wire [7:0] uio_oe;
 
   // temp wires to test pong game outputs
-   wire [9:0] ball_x_pos;
-   wire [9:0] ball_y_pos;
-   wire [9:0] player_paddle_y;
-   wire [9:0] opponent_paddle_y;
-   wire [7:0] score; //(top half opponent score, bottom half player score)
+  // wire [9:0] ball_x_pos;
+  // wire [9:0] ball_y_pos;
+  // wire [9:0] player_paddle_y;
+  // wire [9:0] opponent_paddle_y;
+  // wire [7:0] score; //(top half opponent score, bottom half player score)
 
 
    
@@ -54,11 +54,11 @@ module tb ();
       .ena    (ena),      // enable - goes high when design is selected
       .clk    (clk),      // clock
      .rst_n  (rst_n),     // not reset
-     .current_ball_x(ball_x_pos), // TEMP FOR TESTING
-     .current_ball_y(ball_y_pos), // TEMP FOR TESTING
-     .player_paddle_y(player_paddle_y), // TEMP FOR TESTING
-     .opponent_paddle_y(opponent_paddle_y), // TEMP FOR TESTING
-     .score(score) // TEMP FOR TESTING
+    // .current_ball_x(ball_x_pos), // TEMP FOR TESTING
+    // .current_ball_y(ball_y_pos), // TEMP FOR TESTING
+    // .player_paddle_y(player_paddle_y), // TEMP FOR TESTING
+    // .opponent_paddle_y(opponent_paddle_y), // TEMP FOR TESTING
+    // .score(score) // TEMP FOR TESTING
   );
 
 endmodule
