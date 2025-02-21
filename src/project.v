@@ -251,18 +251,12 @@ module tt_um_PongGame (
                 end
             end
         end
-
-        
     end
 
-    // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
     assign uo_out = vga_out;  // Second to last bit
-    //assign uo_out[7] = ball_dir_y;  // Last bit
-    //assign current_ball_y[9:0] = ball_y;
-    //assign current_ball_x[9:0] = ball_x;
-    //assign player_paddle_y[9:0] = paddle_y;
-    //assign opponent_paddle_y[9:0] = op_paddle_y;
-    //assign score[7:0] = game_score;
+    assign uio_out = 0;
+    assign uio_oe = 0;
+
 
     
 endmodule
