@@ -1,38 +1,30 @@
 `default_nettype none
 `timescale 1us / 1ns
 
-module in_paddle(
-    input [9:0] i, j, current, op_current,
-    output reg result
-);
-    parameter PADDLE_HEIGHT = 10;
-    parameter PADDLE_WIDTH = 2;
-    parameter SCREEN_WIDTH = 640;
+`default_nettype none
+`timescale 1us / 1ns
 
-    always @(*) begin
-        if((i >= op_current && i < op_current + PADDLE_HEIGHT && j >= 0 && j < PADDLE_WIDTH) || 
-           (i >= current && i < current + PADDLE_HEIGHT && j >= SCREEN_WIDTH - PADDLE_WIDTH && j < SCREEN_WIDTH)) begin
-            result = 1;
-        end else begin
-            result = 0;
-        end
+// Function to check if pixel is within the paddle area
+function in_paddle(input [9:0] i, input [9:0] j, input [9:0] current, input [9:0] op_current);
+    begin
+        if ((i >= op_current && i < op_current + PADDLE_HEIGHT && j >= 0 && j < PADDLE_WIDTH) || 
+            (i >= current && i < current + PADDLE_HEIGHT && j >= SCREEN_WIDTH - PADDLE_WIDTH && j < SCREEN_WIDTH)) 
+            in_paddle = 1;
+        else
+            in_paddle = 0;
     end
-endmodule
+endfunction
 
-module in_ball(
-    input [9:0] i, j, ball_x, ball_y,
-    output reg result
-);
-    parameter BALL_SIZE = 4;
-
-    always @(*) begin
-        if(j >= ball_x && j <= ball_x + BALL_SIZE && i >= ball_y && i <= ball_y + BALL_SIZE) begin
-            result = 1;
-        end else begin
-            result = 0;
-        end
+// Function to check if pixel is within the ball area
+function in_ball(input [9:0] i, input [9:0] j, input [9:0] ball_x, input [9:0] ball_y);
+    begin
+        if (j >= ball_x && j <= ball_x + BALL_SIZE && i >= ball_y && i <= ball_y + BALL_SIZE)
+            in_ball = 1;
+        else
+            in_ball = 0;
     end
-endmodule
+endfunction
+
 
 module tt_um_PongGame (
     input  wire [7:0] ui_in,    // The value could be zero or one, indicating up or down movement, or something similar
@@ -53,10 +45,6 @@ module tt_um_PongGame (
     output wire [9:0] current_ball_y,
     output wire [7:0] score //(top half opponent score, bottom half player score)
 
-
-    
-
-    
 );
 
   // List all unused inputs to prevent warnings
@@ -177,6 +165,32 @@ module tt_um_PongGame (
             op_paddle_y <= op_paddle_y + PADDLE_SPEED;
     end
 
+    always @(posedge clk_div[15]) begin
+        integer i, j;
+        for (i = -37; i < SCREEN_HEIGHT + 8; i = i + 1) begin
+            for (j = -152; j < SCREEN_WIDTH + 8; j = j + 1) begin
+                if (j >= -144 && j < -48) begin
+                    output[0] <= 0;
+                end else begin
+                    output[0] <= 1;
+                end
+
+                if (i >= -35 && i < -33) begin
+                    output[1] <= 0;
+                end else begin
+                    output[1] <= 1;
+                end
+
+                if ((i < 0 || i >= SCREEN_HEIGHT) || (j < 0 || j >= SCREEN_WIDTH) ||
+                    in_paddle(i, j, paddle_y, op_paddle_y) || in_ball(i, j, ball_x, ball_y)) begin
+                    output[2] <= 0;
+                end else begin
+                    output[2] <= 1;
+                end
+            end
+        end
+    end
+
     // Assign second-to-last bit to ball_dir_x, last bit to ball_dir_y
     assign uo_out[6] = ball_dir_x;  // Second to last bit
     assign uo_out[7] = ball_dir_y;  // Last bit
@@ -186,27 +200,5 @@ module tt_um_PongGame (
     assign opponent_paddle_y[9:0] = op_paddle_y;
     assign score[7:0] = game_score;
 
-
-/*
-    // SOME IDEAS FOR HOW TO RENDER IMAGE
-
-  // logic for which pixels to render on screen 
-    reg [9:0] rendered_screen_x = 0;
-    reg [8:0] rendered_screen_y = 0;
-
-    reg h_sync = 1; 
-    reg v_sync = 1; // we update game frame when v_sync = 0;
-    
-    always @(posedge clk_div[0]) begin // need output basically once every 31.77microsec/800 this corresponds with a 25.1MHz per pixel
-        if (rendered_screen_x = 
-        
-        if (rendered_screen_x = 800)
-            rendered_screen_y <= rendered_screen_y + 1;
-        
-        
-        
-    end
-
-    */
     
 endmodule
