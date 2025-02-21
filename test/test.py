@@ -53,21 +53,15 @@ async def test_project(dut):
         await ClockCycles(dut.clk, 1)
 
         time = i * 40
-
+    
         hsync = dut.uo_out[7]
         vsync = dut.uo_out[6]
-        red = dut.uo_out[5:4]
-        blue = dut.uo_out[3:2]
-        green = dut.uo_out[1:0]
+        red = [dut.uo_out[5],dut.uo_out[4]]
+        blue = [dut.uo_out[3],dut.uo_out[2]]
+        green = [dut.uo_out[1],dut.uo_out[0]]
 
-            # Using f-strings (Python 3.6+)
-        data_string = f" {time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n"
+        data_string = f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n"
 
-        # Using string formatting
-        # data_string = "Name: %s, Age: %d, City: %s\n" % (name, age, city)
-
-
-        
         f.write(data_string)
     f.close()
 
