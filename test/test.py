@@ -68,7 +68,7 @@ async def test_project(dut):
         green_0 = dut.uo_out[0].value
         
 
-        dut._log.info(f"{time} ns: {hsync} {vsync} 0{red} 0{blue} {green}\n")
+        dut._log.info(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
         f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
     f.close()
 
