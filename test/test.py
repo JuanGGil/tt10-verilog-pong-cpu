@@ -19,12 +19,6 @@ from cocotb.triggers import ClockCycles
 
 
 
-    f = open("test_vga_output.txt", "w")
-    f.write("This is a new file.")
-    f.close(
-
-
-
 
 
 
