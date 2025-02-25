@@ -90,7 +90,7 @@ module tt_um_PongGame (
     reg [5:0] clk_div;
     
     // Ball movement
-    always @(posedge clk_div[4]) begin // on the 32nd out of 60 frames generated per second (happens once per second)
+    always @(posedge clk_div[1]) begin // on the 32nd out of 60 frames generated per second (happens once per second)
         if (!rst_n) begin
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
