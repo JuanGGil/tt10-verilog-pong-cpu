@@ -73,7 +73,7 @@ async def test_project(dut):
             #dut._log.info(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
             f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
         dut._log.info(f"{j}/3 frames completed")
-        await ClockCycles(dut.clk, 800*525*60)
+        await ClockCycles(dut.clk, 800*525*60*30)
     f.close()
 
 
