@@ -62,7 +62,7 @@ module tt_um_PongGame (
     parameter PLAYER_PADDLE_X_POS = 610;
 
     // VGA output
-    reg [7:0] vga_out;
+    reg [7:0] vga_out = 0;
 
     // Ball direction
     reg ball_dir_x = 1; // 1 for right, 0 for left
@@ -87,7 +87,7 @@ module tt_um_PongGame (
     reg [9:0] rendered_y = 0; // this register holds the current pixel's y-position that is being rendered via VGA (0-525 industry standard)
     
     // Clock divider to make game run at readable speeds, this is incremented on each game frame being generated
-    reg [5:0] clk_div;
+    reg [5:0] clk_div = 0;
     
     // Ball movement
     always @(posedge clk_div[1]) begin // on the 32nd out of 60 frames generated per second (happens once per second)
@@ -123,8 +123,8 @@ module tt_um_PongGame (
     end
 
     // Paddle movement
-    reg btn_up;
-    reg btn_down;
+    reg btn_up = 0;
+    reg btn_down = 0;
 
     always @(ui_in) begin
         if (ui_in[0] == 1) begin // Assuming `ui_in[0]` for up, and `ui_in[1]` for down
