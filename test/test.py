@@ -52,9 +52,9 @@ async def test_project(dut):
             
             # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
             #await ClockCycles(dut.clk, 65540)
-            await ClockCycles(dut.clk, 2)
+            await ClockCycles(dut.clk, 1)
     
-            time = i * 80 + j * (((800*525)+10)) #*40)
+            time = i * 40 + j * (((800*525)+10)) #*40)
             
             hsync = dut.uo_out[7].value
             
@@ -72,7 +72,7 @@ async def test_project(dut):
     
             #dut._log.info(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
             f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
-            f.write(f"{time + 40} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
+            #f.write(f"{time + 40} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
             
         dut._log.info(f"{j}/3 frames completed")
         #await ClockCycles(dut.clk, 800*525*60*30)
