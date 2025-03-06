@@ -60,6 +60,8 @@ module tt_um_PongGame (
     parameter PADDLE_SPEED = 2;
     parameter OPP_PADDLE_X_POS = 30;
     parameter PLAYER_PADDLE_X_POS = 610;
+    parameter MIDDLE_LINE_WIDTH = 10;
+    parameter SUPER_PIXEL_SIZE = 10;
 
     // VGA output
     reg [7:0] vga_out = 0;
@@ -69,7 +71,7 @@ module tt_um_PongGame (
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
     // Game Score
-    reg [7:0] game_score = 0;
+    reg [7:0] game_score = 0; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
     
 
     // Ball position
@@ -176,11 +178,234 @@ module tt_um_PongGame (
             else
                 vga_out <= 8'b11000000; // keep Vsync High
         end
+
         
         // logic for rendering one video line (currently rendering only for paddles and ball)
         // FOR FUTURE: render score and middle dotted line
         if (rendered_x > 7 && rendered_x < 648) begin
+
+            // Render middle line
+            if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492)
+                vga_out <= 8'b10010001; // keep Vsync Low, display vertical purple line
+            else if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH)  && ~(rendered_y > 489 && rendered_y < 492))
+                vga_out <= 8'b11010001; // keep Vsync High, display vertical purple line
+
+            // Render Opponent Score
             
+            // make a 3x5 super pixel grid which depending on the current score changes the rendering to match the number
+            // 1 super pixel = 10x10 pixels
+            
+            // Opp Super Pixel[0][0] : {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered
+            if (rendered_x < 158 && rendered_x > 169 && rendered_y > 72 && rendered_y < 83) begin
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+            end
+            
+            // Opp Super Pixel[1][0]: {0,1,2,3,5,6,7,8,9} rendered, {4} not rendered
+            if (rendered_x < 158 + SUPER_PIXEL_SIZE && rendered_x > 169 + SUPER_PIXEL_SIZE && rendered_y > 72 && rendered_y < 83) begin
+                if (~((game_score & 8'b11110000) && 8'b01000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[2][0]: {0,2,3,4,5,6,7,8,9} rendered, {1} not rendered
+            if (rendered_x < 158 + (2*SUPER_PIXEL_SIZE) && rendered_x > 169 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 && rendered_y < 83) begin
+                if (~((game_score & 8'b11110000) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[0][1]: {0,4,5,6,8,9} rendered, {1,2,3,7} not rendered
+            if (rendered_x < 158 && rendered_x > 169 && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (~(((game_score & 8'b11110000) && 8'b00010000) || ((game_score & 8'b11110000) && 8'b00100000) || ((game_score & 8'b11110000) && 8'b00110000) || ((game_score & 8'b11110000) && 8'b01110000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Opp Super Pixel[1][1]: {1} rendered, {0,2,3,4,5,6,7,8,9} not rendered
+            if (rendered_x < 158 + SUPER_PIXEL_SIZE && rendered_x > 169 + SUPER_PIXEL_SIZE && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (((game_score & 8'b11110000) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[2][1]: {0,2,3,4,7,8,9} rendered, {1,5,6} not rendered
+            if (rendered_x < 158 + (2*SUPER_PIXEL_SIZE) && rendered_x > 169 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (~(((game_score & 8'b11110000) && 8'b00010000) || ((game_score & 8'b11110000) && 8'b01010000) || ((game_score & 8'b11110000) && 8'b01100000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[0][2]: {0,2,3,4,5,6,8,9} rendered, {1,7} not rendered
+            if (rendered_x < 158 && rendered_x > 169 && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b11110000) && 8'b00010000) || ((game_score & 8'b11110000) && 8'b01110000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Opp Super Pixel[1][2]: {1,2,3,4,5,6,7,8,9} rendered, {0} not rendered
+            if (rendered_x < 158 + SUPER_PIXEL_SIZE && rendered_x > 169 + SUPER_PIXEL_SIZE && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~((game_score & 8'b11110000) && 8'b00000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[2][2]: {0,2,3,4,5,6,7,8,9} rendered, {1} not rendered
+            if (rendered_x < 158 + (2*SUPER_PIXEL_SIZE) && rendered_x > 169 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~((game_score & 8'b11110000) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[0][3]: {0,2,6,8} rendered, {1,3,4,5,7,9} not rendered
+            if (rendered_x < 158 && rendered_x > 169 && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if (((game_score & 8'b11110000) && 8'b00000000) || ((game_score & 8'b11110000) && 8'b00100000) || ((game_score & 8'b11110000) && 8'b01100000) || ((game_score & 8'b11110000) && 8'b10000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Opp Super Pixel[1][3]: {1} rendered, {0,2,3,4,5,6,7,8,9} not rendered
+            if (rendered_x < 158 + SUPER_PIXEL_SIZE && rendered_x > 169 + SUPER_PIXEL_SIZE && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if ((game_score & 8'b11110000) && 8'b00010000) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[2][3]: {0,3,4,5,6,7,8,9} rendered, {1,2} not rendered
+            if (rendered_x < 158 + (2*SUPER_PIXEL_SIZE) && rendered_x > 169 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b11110000) && 8'b00010000) || ((game_score & 8'b11110000) && 8'b00100000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[0][3]: {0,1,2,3,5,6,8} rendered, {4,7,9} not rendered
+            if (rendered_x < 158 && rendered_x > 169 && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b11110000) && 8'b01000000) || ((game_score & 8'b11110000) && 8'b01110000) || ((game_score & 8'b11110000) && 8'b10010000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Opp Super Pixel[1][3]: {0,1,2,3,5,6,8} rendered, {4,7,9} not rendered
+            if (rendered_x < 158 + SUPER_PIXEL_SIZE && rendered_x > 169 + SUPER_PIXEL_SIZE && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b11110000) && 8'b01000000) || ((game_score & 8'b11110000) && 8'b01110000) || ((game_score & 8'b11110000) && 8'b10010000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Opp Super Pixel[2][3]: {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered 
+            if (rendered_x < 158 + (2*SUPER_PIXEL_SIZE) && rendered_x > 169 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+            end
+
+            
+            // Render Player Score
+
+            // make a 3x5 super pixel grid which depending on the current score changes the rendering to match the number
+            // 1 super pixel = 10x10 pixels
+            
+            // Player Super Pixel[0][0] : {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered
+            if (rendered_x < 478 && rendered_x > 489 && rendered_y > 72 && rendered_y < 83) begin
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+            end
+            
+            // Player Super Pixel[1][0]: {0,1,2,3,5,6,7,8,9} rendered, {4} not rendered
+            if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 && rendered_y < 83) begin
+                if (~((game_score & 8'b00001111) && 8'b01000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[2][0]: {0,2,3,4,5,6,7,8,9} rendered, {1} not rendered
+            if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 && rendered_y < 83) begin
+                if (~((game_score & 8'b00001111) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[0][1]: {0,4,5,6,8,9} rendered, {1,2,3,7} not rendered
+            if (rendered_x < 478 && rendered_x > 489 && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (~(((game_score & 8'b00001111) && 8'b00010000) || ((game_score & 8'b00001111) && 8'b00100000) || ((game_score & 8'b00001111) && 8'b00110000) || ((game_score & 8'b00001111) && 8'b01110000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Player Super Pixel[1][1]: {1} rendered, {0,2,3,4,5,6,7,8,9} not rendered
+            if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (((game_score & 8'b00001111) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[2][1]: {0,2,3,4,7,8,9} rendered, {1,5,6} not rendered
+            if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + SUPER_PIXEL_SIZE && rendered_y < 83 + SUPER_PIXEL_SIZE) begin
+                if (~(((game_score & 8'b00001111) && 8'b00010000) || ((game_score & 8'b00001111) && 8'b01010000) || ((game_score & 8'b00001111) && 8'b01100000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[0][2]: {0,2,3,4,5,6,8,9} rendered, {1,7} not rendered
+            if (rendered_x < 478 && rendered_x > 489 && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b00001111) && 8'b00010000) || ((game_score & 8'b00001111) && 8'b01110000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Player Super Pixel[1][2]: {1,2,3,4,5,6,7,8,9} rendered, {0} not rendered
+            if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~((game_score & 8'b00001111) && 8'b00000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[2][2]: {0,2,3,4,5,6,7,8,9} rendered, {1} not rendered
+            if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE)) begin
+                if (~((game_score & 8'b00001111) && 8'b00010000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[0][3]: {0,2,6,8} rendered, {1,3,4,5,7,9} not rendered
+            if (rendered_x < 478 && rendered_x > 489 && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if (((game_score & 8'b00001111) && 8'b00000000) || ((game_score & 8'b00001111) && 8'b00100000) || ((game_score & 8'b00001111) && 8'b01100000) || ((game_score & 8'b11110000) && 8'b10000000)) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Player Super Pixel[1][3]: {1} rendered, {0,2,3,4,5,6,7,8,9} not rendered
+            if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if ((game_score & 8'b00001111) && 8'b00010000) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[2][3]: {0,3,4,5,6,7,8,9} rendered, {1,2} not rendered
+            if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (3*SUPER_PIXEL_SIZE) && rendered_y < 83 + (3*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b00001111) && 8'b00010000) || ((game_score & 8'b00001111) && 8'b00100000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[0][3]: {0,1,2,3,5,6,8} rendered, {4,7,9} not rendered
+            if (rendered_x < 478 && rendered_x > 489 && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b00001111) && 8'b01000000) || ((game_score & 8'b00001111) && 8'b01110000) || ((game_score & 8'b00001111) && 8'b10010000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+            
+            // Player Super Pixel[1][3]: {0,1,2,3,5,6,8} rendered, {4,7,9} not rendered
+            if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                if (~(((game_score & 8'b00001111) && 8'b01000000) || ((game_score & 8'b00001111) && 8'b01110000) || ((game_score & 8'b00001111) && 8'b10010000))) begin
+                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                end
+            end
+
+            // Player Super Pixel[2][3]: {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered 
+            if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE)) begin
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+            end
+
+
+                    
+
             // Opponent paddle render logic
             
             if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
