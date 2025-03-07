@@ -71,7 +71,7 @@ module tt_um_PongGame (
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
     // Game Score
-    reg [7:0] game_score = (8 + 15) + 8; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
+    reg [7:0] game_score = (9 + 15) + 9; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
     
 
     // Ball position
