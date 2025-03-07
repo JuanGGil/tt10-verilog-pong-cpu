@@ -93,21 +93,26 @@ module tt_um_PongGame (
     
     // Ball movement
     always @(posedge clk_div[0]) begin // on the 32nd out of 60 frames generated per second (happens once per second)
-        if (!rst_n) begin
+        if (!rst_n)
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
-        end else begin
+        else begin
             // Update ball position
-            if (ball_dir_x)
+            ball_x <= ball_x + BALL_SPEED; // TEMP TESTING
+            ball_y <= ball_y + BALL_SPEED; // TEMP TESTING
+
+            
+            if (ball_dir_x > 0 && ball_dir_y > 0)
                 ball_x <= ball_x + BALL_SPEED;
-            else
+                ball_y <= ball_y + BALL_SPEED;
+            else if (~ball_dir_x > 0 && ball_dir_y > 0)
                 ball_x <= ball_x - BALL_SPEED;
 
             if (ball_dir_y)
                 ball_y <= ball_y + BALL_SPEED;
             else
                 ball_y <= ball_y - BALL_SPEED;
-
+        
             // Ball collision with screen edges
             if (ball_x <= BALL_SIZE) // Here, player scores
                 game_score <= game_score + 1; // equivalent to + 1'b1 (bottom half of score is player)
