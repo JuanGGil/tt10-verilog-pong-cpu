@@ -409,9 +409,9 @@ module tt_um_PongGame (
             // Opponent paddle render logic
             
             if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
-                vga_out <= 8'b10111111; // keep Vsync Low, display a white pixel for opponent paddle
+                vga_out <= 8'b10110011; // keep Vsync Low, display a white pixel for opponent paddle
             else if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
-                vga_out <= 8'b11111111; // keep Vsync High, display a white pixel for opponent paddle 
+                vga_out <= 8'b11110011; // keep Vsync High, display a white pixel for opponent paddle 
 
             // Player paddle render logic
             
