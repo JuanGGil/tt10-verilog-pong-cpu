@@ -61,7 +61,7 @@ module tt_um_PongGame (
     parameter OPP_PADDLE_X_POS = 30;
     parameter PLAYER_PADDLE_X_POS = 610;
     parameter MIDDLE_LINE_WIDTH = 4;
-    parameter SUPER_PIXEL_SIZE = 10;
+    parameter SUPER_PIXEL_SIZE = 8;
 
     // VGA output
     reg [7:0] vga_out = 0;
