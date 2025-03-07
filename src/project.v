@@ -60,8 +60,8 @@ module tt_um_PongGame (
     parameter PADDLE_SPEED = 2;
     parameter OPP_PADDLE_X_POS = 30;
     parameter PLAYER_PADDLE_X_POS = 610;
-    parameter MIDDLE_LINE_WIDTH = 10;
-    parameter SUPER_PIXEL_SIZE = 10;
+    parameter MIDDLE_LINE_WIDTH = 4;
+    parameter SUPER_PIXEL_SIZE = 4;
 
     // VGA output
     reg [7:0] vga_out = 0;
@@ -71,7 +71,7 @@ module tt_um_PongGame (
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
     // Game Score
-    reg [7:0] game_score = 17; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
+    reg [7:0] game_score = 0; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
     
 
     // Ball position
@@ -387,14 +387,16 @@ module tt_um_PongGame (
             
             // Player Super Pixel[1][3]: {0,1,2,3,5,6,8} rendered, {4,7,9} not rendered
             if (rendered_x < 478 + SUPER_PIXEL_SIZE && rendered_x > 489 + SUPER_PIXEL_SIZE && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE) && ~(((game_score & 8'b00001111) && 8'b01000000) || ((game_score & 8'b00001111) && 8'b01110000) || ((game_score & 8'b00001111) && 8'b10010000)))
-                    vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
 
             // Player Super Pixel[2][3]: {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered 
-            else if (rendered_x < (478 + (2*SUPER_PIXEL_SIZE)) && rendered_x > (489 + (2*SUPER_PIXEL_SIZE)) && rendered_y > (72 + (4*SUPER_PIXEL_SIZE)) && rendered_y < (83 + (4*SUPER_PIXEL_SIZE)))
+            else if (rendered_x > (489 + (2*SUPER_PIXEL_SIZE)) && rendered_x < (478 + (2*SUPER_PIXEL_SIZE)) && rendered_y > (72 + (4*SUPER_PIXEL_SIZE)) && rendered_y < (83 + (4*SUPER_PIXEL_SIZE)))
                 vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
             
 
-
+            // TEST TEST TEST Player Super Pixel[0][0]: {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered 
+            else if (rendered_x > (489 + (SUPER_PIXEL_SIZE)) && rendered_x < (478 + (SUPER_PIXEL_SIZE)) && rendered_y > (72 + (SUPER_PIXEL_SIZE)) && rendered_y < (83 + (SUPER_PIXEL_SIZE)))
+                vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
             
 
 
