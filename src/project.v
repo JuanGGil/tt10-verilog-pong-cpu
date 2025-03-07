@@ -56,7 +56,7 @@ module tt_um_PongGame (
     parameter BALL_SIZE = 10;
     parameter PADDLE_WIDTH = 10;
     parameter PADDLE_HEIGHT = 60;
-    parameter BALL_SPEED = 2;
+    parameter BALL_SPEED = 10; // ORIGINALLY 2
     parameter PADDLE_SPEED = 2;
     parameter OPP_PADDLE_X_POS = 30;
     parameter PLAYER_PADDLE_X_POS = 610;
