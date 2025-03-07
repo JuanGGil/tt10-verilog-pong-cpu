@@ -186,9 +186,9 @@ module tt_um_PongGame (
 
             // Render middle line
             if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492)
-                vga_out <= 8'b10010001; // keep Vsync Low, display vertical purple line
+                vga_out <= 8'b10110011; // keep Vsync Low, display vertical purple line
             else if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH)  && ~(rendered_y > 489 && rendered_y < 492))
-                vga_out <= 8'b11010001; // keep Vsync High, display vertical purple line
+                vga_out <= 8'b11110011; // keep Vsync High, display vertical purple line
 
             // Render Opponent Score
             
