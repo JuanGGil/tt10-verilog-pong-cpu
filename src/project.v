@@ -390,7 +390,7 @@ module tt_um_PongGame (
                     vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
 
             // Player Super Pixel[2][3]: {0,1,2,3,4,5,6,7,8,9} rendered, {} not rendered 
-            else if (rendered_x < 478 + (2*SUPER_PIXEL_SIZE) && rendered_x > 489 + (2*SUPER_PIXEL_SIZE) && rendered_y > 72 + (4*SUPER_PIXEL_SIZE) && rendered_y < 83 + (4*SUPER_PIXEL_SIZE))
+            else if (rendered_x < (478 + (2*SUPER_PIXEL_SIZE)) && rendered_x > (489 + (2*SUPER_PIXEL_SIZE)) && rendered_y > (72 + (4*SUPER_PIXEL_SIZE)) && rendered_y < (83 + (4*SUPER_PIXEL_SIZE)))
                 vga_out <= 8'b11111111; //vsync is invariant within this range, display a white super pixel
             
 
@@ -421,9 +421,9 @@ module tt_um_PongGame (
 
             // Render middle line
             
-            else if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (327 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492)
+            else if (rendered_x < (327 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492)
                 vga_out <= 8'b10110011; // keep Vsync Low, display vertical purple line
-            else if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (327 - MIDDLE_LINE_WIDTH) && ~(rendered_y > 489 && rendered_y < 492))
+            else if (rendered_x < (327 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && ~(rendered_y > 489 && rendered_y < 492))
                 vga_out <= 8'b11110011; // keep Vsync High, display vertical purple line
 
             // Empty space render logic
