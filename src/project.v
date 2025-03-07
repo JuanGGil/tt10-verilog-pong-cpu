@@ -184,14 +184,19 @@ module tt_um_PongGame (
         // FOR FUTURE: render score and middle dotted line
         if (rendered_x > 7 && rendered_x < 648) begin
 
+
+                        
+            //if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && rendered_y > 489 && rendered_y < 492)
+            //if (rendered_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && rendered_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && rendered_y >= (op_paddle_y - PADDLE_HEIGHT) && rendered_y <= (op_paddle_y + PADDLE_HEIGHT) && ~(rendered_y > 489 && rendered_y < 492))
+
+
             // Render middle line
-            if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492) begin
+            if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && rendered_y > 489 && rendered_y < 492)
                 vga_out <= 8'b10110011; // keep Vsync Low, display vertical purple line
-            end
             
-            if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && ~(rendered_y > 489 && rendered_y < 492)) begin
+            
+            if (rendered_x < (328 + MIDDLE_LINE_WIDTH) && rendered_x > (328 - MIDDLE_LINE_WIDTH) && ~(rendered_y > 489 && rendered_y < 492))
                 vga_out <= 8'b11110011; // keep Vsync High, display vertical purple line
-            end
 
             // Render Opponent Score
             
