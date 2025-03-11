@@ -96,10 +96,12 @@ module tt_um_PongGame (
         if (!rst_n)
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
-        else if (rst_n && ball_dir_x > 0 && ball_dir_y > 0)
+        else begin
+            // if (rst_n && ball_dir_x > 0 && ball_dir_y > 0) begin
             // Update ball position
             ball_x <= ball_x + BALL_SPEED; // TEMP TESTING
-            ball_y <= ball_y + BALL_SPEED; // TEMP TESTING
+            ball_y <= ball_y + BALL_SPEED; // TEMP TESTING 
+        end
         /*
         else if (rst_n && ~ball_dir_x > 0 && ball_dir_y > 0
             else if (~ball_dir_x > 0 && ball_dir_y > 0)
