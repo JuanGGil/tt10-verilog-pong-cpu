@@ -96,17 +96,15 @@ module tt_um_PongGame (
         if (!rst_n)
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
-        else
+        else if (rst_n && ball_dir_x > 0 && ball_dir_y > 0)
             // Update ball position
             ball_x <= ball_x + BALL_SPEED; // TEMP TESTING
             ball_y <= ball_y + BALL_SPEED; // TEMP TESTING
-
-            
-            if (ball_dir_x > 0 && ball_dir_y > 0)
-                ball_x <= ball_x + BALL_SPEED;
-                ball_y <= ball_y + BALL_SPEED;
+        /*
+        else if (rst_n && ~ball_dir_x > 0 && ball_dir_y > 0
             else if (~ball_dir_x > 0 && ball_dir_y > 0)
                 ball_x <= ball_x - BALL_SPEED;
+                ball_y <= ball_y + BALL_SPEED; // TEMP TESTING
 
             if (ball_dir_y)
                 ball_y <= ball_y + BALL_SPEED;
@@ -127,6 +125,7 @@ module tt_um_PongGame (
             if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE)
                 ball_dir_y <= ~ball_dir_y;
         end
+        */
     end
 
     // Paddle movement
