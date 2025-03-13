@@ -135,6 +135,8 @@ module tt_um_PongGame (
                 ball_dir_y <= ~ball_dir_y;
         end
         */
+    
+        end
     end
 
     // Paddle movement
