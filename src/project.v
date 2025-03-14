@@ -39,7 +39,7 @@ module tt_um_PongGame (
     reg ball_dir_y = 1; // 1 for down, 0 for up
 
     // Game Score
-    reg [7:0] game_score = 17; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
+    reg [7:0] game_score = 0; // 0'bxxxx0000 is opp score, 0'b0000xxxx is player score
     
 
     // Ball position
@@ -77,27 +77,33 @@ module tt_um_PongGame (
         end else if (rst_n && ball_dir_x < 0 && ball_dir_y < 0) begin
             ball_x <= ball_x - BALL_SPEED; 
             ball_y <= ball_y - BALL_SPEED;  
+        end else if (ball_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && ball_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && ball_y >= (op_paddle_y - PADDLE_HEIGHT) && ball_y <= (op_paddle_y + PADDLE_HEIGHT)) begin
+            // ball collides with opponent's paddle
+            ball_dir_x = ~ball_dir_x;
+        end else if (ball_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && ball_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && ball_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT)) begin
+            // ball collides with player's paddle
+            ball_dir_x = ~ball_dir_x;
+        end else if (ball_y <= SCREEN_HEIGHT || ball_y >= 0) begin
+            // ball collides with top and bottom edges of screen
+            ball_dir_y = ~ball_dir_y;
+        end else if (ball_x <= 0) begin
+            // ball collides with opponent's wall (+1 score to player) // NEED TO IMPLEMENT A DELAY WHERE BALL RESPAWNS
+            ball_dir_x = ~ball_dir_x;
+            ball_dir_y = ~ball_dir_y;
+            score = score + 1; // NEED TO IMPLEMENT A CHECK IF THE PLAYER HAS WON (+9 score)
 
+            ball_x = SCREEN_WIDTH / 2;
+            ball_y = SCREEN_HEIGHT / 2;
             
-        /*
-        
-            // Ball collision with screen edges
-            if (ball_x <= BALL_SIZE) // Here, player scores
-                game_score <= game_score + 1; // equivalent to + 1'b1 (bottom half of score is player)
-                ball_x <= SCREEN_WIDTH / 2;
-                ball_y <= SCREEN_HEIGHT / 2;
-            
-            if (ball_x >= SCREEN_WIDTH - BALL_SIZE) // Here, opponent scores
-                game_score <= game_score + 16; // equivalent to + 1'b10000 (top half of score is opponent)
-                ball_x <= SCREEN_WIDTH / 2;
-                ball_y <= SCREEN_HEIGHT / 2;
-            
-            if (ball_y <= BALL_SIZE || ball_y >= SCREEN_HEIGHT - BALL_SIZE)
-                ball_dir_y <= ~ball_dir_y;
-        end
-        */
-    
-        end
+        end else if (ball_x >= SCREEN_WIDTH) begin
+            // ball collides with player's wall (+1 score to opponent) // NEED TO IMPLEMENT A DELAY WHERE BALL RESPAWNS
+            ball_dir_x = ~ball_dir_x;
+            ball_dir_y = ~ball_dir_y;
+            score = score + 16; // NEED TO IMPLEMENT A CHECK IF THE OPPONENT HAS WON (+9 score)
+
+            ball_x = SCREEN_WIDTH / 2;
+            ball_y = SCREEN_HEIGHT / 2;
+        end 
     end
 
     // Paddle movement
@@ -157,7 +163,6 @@ module tt_um_PongGame (
 
         
         // logic for rendering one video line (currently rendering only for paddles and ball)
-        // FOR FUTURE: render score and middle dotted line
         if (rendered_x > 7 && rendered_x < 648) begin
 
             // Render Opponent Score
