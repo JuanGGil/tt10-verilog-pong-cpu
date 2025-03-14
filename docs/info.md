@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+The Pong CPU/simulator contains a simplified set of game mechanics for Pong, published by Atari in 1972. We are utilizing the input and outputs for keyboard actions and a simulated VGA signal. We are yet to implement the keyboard inputs, and the VGA output needs to be tested on hardware.
 
 ## How to test
 
-Explain how to use your project
+To verify, we adapted the I/O section of the code to match the configurations on a Basys 3 FGPA development board. If the VGA output on Basys 3 is correctly displaying game content, then we are confident that the taped out chip is functional.
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+VGA monitor
