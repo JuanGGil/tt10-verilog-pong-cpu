@@ -77,13 +77,13 @@ module tt_um_PongGame (
         end else if (rst_n && ball_dir_x < 0 && ball_dir_y < 0) begin
             ball_x <= ball_x - BALL_SPEED; 
             ball_y <= ball_y - BALL_SPEED;  
-        end else if (ball_x >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && ball_x <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && ball_y >= (op_paddle_y - PADDLE_HEIGHT) && ball_y <= (op_paddle_y + PADDLE_HEIGHT)) begin
+        end else if ( (ball_x + BALL_SIZE) >= (OPP_PADDLE_X_POS - PADDLE_WIDTH) && (ball_x - BALL_SIZE) <= (OPP_PADDLE_X_POS + PADDLE_WIDTH) && (ball_y + BALL_SIZE)>= (op_paddle_y - PADDLE_HEIGHT) && (ball_y - BALL_SIZE) <= (op_paddle_y + PADDLE_HEIGHT)) begin
             // ball collides with opponent's paddle
             ball_dir_x = ~ball_dir_x;
-        end else if (ball_x >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && ball_x <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && ball_y >= (paddle_y - PADDLE_HEIGHT) && rendered_y <= (paddle_y + PADDLE_HEIGHT)) begin
+        end else if ((ball_x + BALL_SIZE) >= (PLAYER_PADDLE_X_POS - PADDLE_WIDTH) && (ball_x - BALL_SIZE) <= (PLAYER_PADDLE_X_POS + PADDLE_WIDTH) && (ball_y + BALL_SIZE) >= (paddle_y - PADDLE_HEIGHT) && (ball_y - BALL_SIZE) <= (paddle_y + PADDLE_HEIGHT)) begin
             // ball collides with player's paddle
             ball_dir_x = ~ball_dir_x;
-        end else if (ball_y <= SCREEN_HEIGHT || ball_y >= 0) begin
+        end else if ((ball_y + BALL_SIZE) <= SCREEN_HEIGHT || (ball_y - BALL_SIZE) >= 0) begin
             // ball collides with top and bottom edges of screen
             ball_dir_y = ~ball_dir_y;
         end else if (ball_x <= 0) begin
