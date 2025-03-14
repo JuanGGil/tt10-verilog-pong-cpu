@@ -90,7 +90,7 @@ module tt_um_PongGame (
             // ball collides with opponent's wall (+1 score to player) // NEED TO IMPLEMENT A DELAY WHERE BALL RESPAWNS
             ball_dir_x = ~ball_dir_x;
             ball_dir_y = ~ball_dir_y;
-            score = score + 1; // NEED TO IMPLEMENT A CHECK IF THE PLAYER HAS WON (+9 score)
+            game_score = game_score + 1; // NEED TO IMPLEMENT A CHECK IF THE PLAYER HAS WON (+9 score)
 
             ball_x = SCREEN_WIDTH / 2;
             ball_y = SCREEN_HEIGHT / 2;
@@ -99,7 +99,7 @@ module tt_um_PongGame (
             // ball collides with player's wall (+1 score to opponent) // NEED TO IMPLEMENT A DELAY WHERE BALL RESPAWNS
             ball_dir_x = ~ball_dir_x;
             ball_dir_y = ~ball_dir_y;
-            score = score + 16; // NEED TO IMPLEMENT A CHECK IF THE OPPONENT HAS WON (+9 score)
+            game_score = game_score + 16; // NEED TO IMPLEMENT A CHECK IF THE OPPONENT HAS WON (+9 score)
 
             ball_x = SCREEN_WIDTH / 2;
             ball_y = SCREEN_HEIGHT / 2;
