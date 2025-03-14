@@ -19,7 +19,7 @@ module tt_um_PongGame (
     // Parameters
     // these might be better to import into the module instead of instantiating this here (for more variable control)
     
-    parameter SCREEN_WIDTH = 640;
+    parameter SCREEN_WIDTH = 590;
     parameter SCREEN_HEIGHT = 480;
     parameter BALL_SIZE = 10;
     parameter PADDLE_WIDTH = 10;
