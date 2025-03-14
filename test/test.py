@@ -44,7 +44,7 @@ async def test_project(dut):
     f = open('test_vga_output.txt', 'w').close()
     f = open("test_vga_output.txt", "a")
     
-    for j in range(3):
+    for j in range(5):
         for i in range(((800*525)+10)): # 30 clock cycles
         #for i in range(10): # 30 clock cycles
     
@@ -74,7 +74,7 @@ async def test_project(dut):
             f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
             #f.write(f"{time + 40} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
             
-        dut._log.info(f"{j}/3 frames completed")
+        dut._log.info(f"{j}/5 frames completed")
         #await ClockCycles(dut.clk, 800*525*60*30)
     f.close()
 
