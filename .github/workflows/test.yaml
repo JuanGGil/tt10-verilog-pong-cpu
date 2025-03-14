@@ -45,3 +45,6 @@ jobs:
           path: |
             test/tb.vcd
             test/results.xml
+
+            # TEMP FOR GETTING AN OUTPUT TO SIMULATE WITH
+            test/test_vga_output.txt      

@@ -13,8 +13,8 @@ The Pong CPU/simulator contains a simplified set of game mechanics for Pong, pub
 
 ## How to test
 
-To
+To verify, we adapted the I/O section of the code to match the configurations on a Basys 3 FGPA development board. If the VGA output on Basys 3 is correctly displaying game content, then we are confident that the taped out chip is functional.
 
 ## External hardware
 
-VGA monitor?
+VGA monitor

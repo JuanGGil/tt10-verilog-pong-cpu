@@ -17,12 +17,17 @@ from cocotb.triggers import ClockCycles
 # ball_x = SCREEN_WIDTH/2
 # ball_y = SCREEN_HEIGHT/2
 
+
+
+
+
+
 @cocotb.test()
 async def test_project(dut):
     dut._log.info("Start")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 0.04, units="us")
+    # Set the clock period to 40 ns (25 MHz)
+    clock = Clock(dut.clk, 40, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -31,16 +36,46 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    # await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
 
-    for i in range(100): # 30 clock cycles
-        dut._log.info(f" X: {int(dut.ball_x_pos.value)}, Y: {int(dut.ball_y_pos.value)}")
-        
-        # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
-        await ClockCycles(dut.clk, 65540)
-        
+    f = open('test_vga_output.txt', 'w').close()
+    f = open("test_vga_output.txt", "a")
+    
+    for j in range(5):
+        for i in range(((800*525)+10)): # 30 clock cycles
+        #for i in range(10): # 30 clock cycles
+    
+            
+            
+            # assert pow(2,ball_dir_x)+ball_dir_y == dut.uo_out
+            #await ClockCycles(dut.clk, 65540)
+            await ClockCycles(dut.clk, 1)
+    
+            time = i * 40 + j * (((800*525)+10)) #*40)
+            
+            hsync = dut.uo_out[7].value
+            
+            vsync = dut.uo_out[6].value
+            
+            red_1 = dut.uo_out[5].value
+            red_0 = dut.uo_out[4].value
+            
+            blue_1 = dut.uo_out[3].value
+            blue_0 = dut.uo_out[2].value
+            
+            green_1 = dut.uo_out[1].value
+            green_0 = dut.uo_out[0].value
+            
+    
+            #dut._log.info(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
+            f.write(f"{time} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
+            #f.write(f"{time + 40} ns: {hsync} {vsync} 0{red_1}{red_0} 0{blue_1}{blue_0} {green_1}{green_0}\n")
+            
+        dut._log.info(f"{j}/5 frames completed")
+        #await ClockCycles(dut.clk, 800*525*60*30)
+    f.close()
 
 
