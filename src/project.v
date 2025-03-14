@@ -147,10 +147,11 @@ module tt_um_PongGame (
     
     // Opponent Paddle simple AI
     always @(posedge clk_div[0]) begin // IN FUTURE clk_div[4] should be used, but testing with clk_div[0] for now
-        if (ball_y <= op_paddle_y)
+        if (ball_y <= op_paddle_y) begin
             op_paddle_y <= op_paddle_y - PADDLE_SPEED;
-        else if (ball_y >= op_paddle_y)
+        end else if (ball_y >= op_paddle_y) begin
             op_paddle_y <= op_paddle_y + PADDLE_SPEED;
+        end
     end
     
     always @(posedge clk) begin // this timing needs to be tweaked, essentially should occur once every 10ns or 25MHz
