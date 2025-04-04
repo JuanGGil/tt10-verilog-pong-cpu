@@ -114,19 +114,14 @@ module tt_um_PongGame (
 
     // List all unused inputs to prevent warnings
     wire _unused = &{ena, uio_in, rst_n, 1'b0};
-
-    uio_out = 0;
-    uio_oe = 0;
     
-	
     // Features to add:
     // maybe a winning or losing animation
     // maybe more color?
     // ball speed varies with game score
     // paddle size varies with game score
-    
-	
-	parameter SCREEN_WIDTH = 640;
+    	
+    parameter SCREEN_WIDTH = 640;
     parameter SCREEN_HEIGHT = 480;
     parameter BALL_SIZE = 3;
     parameter PADDLE_WIDTH = 3;
@@ -529,7 +524,6 @@ module tt_um_PongGame (
     end
 
 end
-        
         if (rendered_x == 799 && rendered_y == 524) begin // finished rendering one line of video, move onto the next line
                 clk_div <= clk_div + 1;  
                 // 60 screens get generated per second (60Hz), therefore we need to have a way to slow the game down for 
@@ -539,5 +533,8 @@ end
                 end
         end
     end
+	
     assign uo_out = (video_on) ? {v_sync, h_sync, rgb_reg} : 8'b0;
+    assign uio_out = 0;
+    assign uio_oe = 0;
 endmodule
