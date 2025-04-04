@@ -133,7 +133,7 @@ module tt_um_PongGame (
     parameter MIDDLE_LINE_WIDTH = 8;
     parameter SUPER_PIXEL_SIZE = 10;
 	
-    reg [6:0] rgb_reg;
+	reg [5:0] rgb_reg;
 	
 	// registers for current rendered pixels
 	wire [9:0] rendered_x;
@@ -200,7 +200,7 @@ module tt_um_PongGame (
 			end
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2;
-            ball_dir_x = 0;
+            //ball_dir_x = 0;
             
         end else if (ball_x >= SCREEN_WIDTH) begin
             // ball collides with player's wall (+1 score to opponent) // NEED TO IMPLEMENT A DELAY WHERE BALL RESPAWNS
@@ -210,7 +210,7 @@ module tt_um_PongGame (
 			end
             ball_x <= SCREEN_WIDTH / 2;
             ball_y <= SCREEN_HEIGHT / 2; 
-            ball_dir_x = 0;
+            //ball_dir_x = 0;
         end
     end
     
