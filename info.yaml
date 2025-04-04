@@ -1,11 +1,11 @@
 # Tiny Tapeout project information
 project:
   title:        "Pong CPU"      # Project title
-  author:       ""      # Your name
+  author:       "Juan Gil & Leyang Wang"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Running the classic game: Pong, on Tiny Tapeout."      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     100000000       # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
@@ -22,8 +22,8 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
+  ui[0]: "up"
+  ui[1]: "down"
   ui[2]: ""
   ui[3]: ""
   ui[4]: ""
@@ -32,14 +32,14 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "Blue[1]"
+  uo[1]: "Blue[0]"
+  uo[2]: "Green[1]"
+  uo[3]: "Green[0]"
+  uo[4]: "Red[1]"
+  uo[5]: "Red[0]"
+  uo[6]: "Vsync"
+  uo[7]: "Hsync"
 
   # Bidirectional pins
   uio[0]: ""
