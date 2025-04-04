@@ -276,8 +276,8 @@ module tt_um_PongGame (
     	// video status output from vga_sync to tell when to route out rgb signal to DAC
 	wire video_on;
 	wire pix_clk;
-    wire hsync;
-    wire vsync;
+	reg hsync = 0;
+	reg vsync = 0;
 
         // instantiate vga_sync
     vga_sync vga_sync_unit (.clk(clk), .rst_n(rst_n), .hsync(hsync), .vsync(vsync),
