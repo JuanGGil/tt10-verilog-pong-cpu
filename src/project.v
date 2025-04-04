@@ -530,11 +530,10 @@ end
                 // human readability and this is one method available to us (+1 clk_div per screen reset every 60 screens)
                 if (clk_div > 59) begin
                     clk_div <= 0;
-                end
+        	end
         end
     end
-	
-    assign uo_out = (video_on) ? {v_sync, h_sync, rgb_reg} : 8'b0;
-    assign uio_out = 0;
-    assign uio_oe = 0;
+	assign uo_out = (video_on) ? {h_sync, v_sync, rgb_reg} : 8'b0;
+	assign uio_out = 0;
+	assign uio_oe = 0;
 endmodule
