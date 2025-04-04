@@ -276,8 +276,8 @@ module tt_um_PongGame (
     	// video status output from vga_sync to tell when to route out rgb signal to DAC
 	wire video_on;
 	wire pix_clk;
-	reg hsync = 0;
-	reg vsync = 0;
+	wire hsync;
+	wire vsync;
 
         // instantiate vga_sync
     vga_sync vga_sync_unit (.clk(clk), .rst_n(rst_n), .hsync(hsync), .vsync(vsync),
@@ -533,7 +533,7 @@ end
         	end
         end
     end
-	assign uo_out = (video_on) ? {h_sync, v_sync, rgb_reg} : 8'b0;
+	assign uo_out = (video_on) ? {hsync, vsync, rgb_reg} : 8'b0;
 	assign uio_out = 0;
 	assign uio_oe = 0;
 endmodule
