@@ -33,7 +33,7 @@ module vga_sync
 	wire [1:0] pixel_next;
 	wire pixel_tick;
 	
-	always @(posedge clk, posedge rst_n)
+	always @(posedge clk)
         if(!rst_n)
 		  pixel_reg <= 0;
 		else
