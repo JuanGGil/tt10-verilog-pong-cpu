@@ -1,5 +1,4 @@
 `default_nettype none
-`timescale 1us / 1ns
 
 // this module is responsible for vsync and hsync timings for VGA signal. This is set to assume that the clock speed is 100MHz,
 // which is then converted into a 25MHz signal for VGA use.
