@@ -224,7 +224,7 @@ module tt_um_PongGame (
         else if (rendered_x > 158 + SUPER_PIXEL_SIZE && rendered_x < 169 + SUPER_PIXEL_SIZE &&
                  rendered_y > 72 + (2*SUPER_PIXEL_SIZE) && rendered_y < 83 + (2*SUPER_PIXEL_SIZE) &&
                  ~((game_score & 8'b11110000) == 8'b00000000))
-            vga_out <= 8'b111111111;
+            vga_out <= 8'b11111111;
     
         // Opp Super Pixel[2][2]: {0,2,3,4,5,6,7,8,9} rendered, {1} not rendered
         else if (rendered_x > 158 + (2*SUPER_PIXEL_SIZE) && rendered_x < 169 + (2*SUPER_PIXEL_SIZE) &&
