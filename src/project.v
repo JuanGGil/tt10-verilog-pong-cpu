@@ -34,10 +34,11 @@ module vga_sync
 	wire pixel_tick;
 	
 	always @(posedge clk)
-        if(!rst_n)
+	if (!rst_n) begin
 		  pixel_reg <= 0;
-		else
+	end else begin
 		  pixel_reg <= pixel_next;
+	end
 	
 	assign pixel_next = pixel_reg + 1; // increment pixel_reg 
 	
@@ -52,7 +53,7 @@ module vga_sync
  
 	// infer registers
     always @(posedge clk, negedge rst_n)
-        if(!rst_n)
+        if (!rst_n)
 		    begin
                     v_count_reg <= 0;
                     h_count_reg <= 0;
@@ -264,10 +265,7 @@ module tt_um_PongGame (
                     else
                         paddle_y <= paddle_y + PADDLE_SPEED;
                 end else if (btn_down && (paddle_y > 8)) begin
-                   if ((paddle_y-PADDLE_SPEED-PADDLE_HEIGHT) < 0)
                         paddle_y <= PADDLE_HEIGHT;
-                    else
-                	paddle_y <= paddle_y - PADDLE_SPEED;
                 end
             end
     end
