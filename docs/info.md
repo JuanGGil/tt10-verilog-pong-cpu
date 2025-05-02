@@ -13,8 +13,8 @@ The Pong CPU/simulator contains a simplified set of game mechanics for Pong, pub
 
 ## How to test
 
-To
+Assuming you do not have the chip from TinyTapeout, you could try our code on a Basys 3 FPGA by modifying the I/O.
 
 ## External hardware
 
-VGA monitor?
+VGA monitor
